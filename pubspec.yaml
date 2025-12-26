@@ -1,0 +1,59 @@
+name: flutter_app_branded_template
+description: "A branded Flutter app template with modern UI, sidebar navigation, and customizable theming"
+publish_to: "none"
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.5.3
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State management
+  provider: ^6.1.1
+
+  # Local storage
+  shared_preferences: ^2.2.2
+
+  # Custom fonts
+  google_fonts: ^6.1.0
+
+  # UI Components
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+    - assets/fonts/
+
+  # fonts:
+  #   - family: Poppins
+  #     fonts:
+  #       - asset: assets/fonts/Poppins-Regular.ttf
+  #       - asset: assets/fonts/Poppins-Bold.ttf
+  #         weight: 700
+  #       - asset: assets/fonts/Poppins-Italic.ttf
+  #         style: italic
+  #       - asset: assets/fonts/Poppins-BoldItalic.ttf
+  #         weight: 700
+  #         style: italic
+  #   - family: Lato
+  #     fonts:
+  #       - asset: assets/fonts/Lato-Regular.ttf
+  #       - asset: assets/fonts/Lato-Bold.ttf
+  #         weight: 700
+  #       - asset: assets/fonts/Lato-Italic.ttf
+  #         style: italic
+  #       - asset: assets/fonts/Lato-BoldItalic.ttf
+  #         weight: 700
+  #         style: italic
+
