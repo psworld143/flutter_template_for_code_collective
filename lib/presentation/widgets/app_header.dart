@@ -25,7 +25,10 @@ class AppHeader extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+      constraints: const BoxConstraints(
+        minHeight: 80,
+      ),
       decoration: BoxDecoration(
         color: backgroundColor ??
             (isDark ? const Color(0xFF2C2C2E) : Colors.white),
@@ -92,6 +95,7 @@ class AppHeader extends StatelessWidget {
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
                   title,
@@ -100,7 +104,10 @@ class AppHeader extends StatelessWidget {
                     fontWeight: FontWeight.w800,
                     color: isDark ? Colors.white : const Color(0xFF1D1D1F),
                     letterSpacing: -0.8,
+                    height: 1.2,
                   ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
                 if (subtitle != null) ...[
                   const SizedBox(height: 8),
@@ -113,6 +120,8 @@ class AppHeader extends StatelessWidget {
                           isDark ? Colors.white70 : const Color(0xFF86868B),
                       height: 1.4,
                     ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ],

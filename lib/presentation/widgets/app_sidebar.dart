@@ -9,12 +9,14 @@ class SidebarMenuItem {
   final IconData icon;
   final int index;
   final List<SidebarMenuItem>? subItems;
+  final Color? iconColor;
 
   SidebarMenuItem({
     required this.title,
     required this.icon,
     required this.index,
     this.subItems,
+    this.iconColor,
   });
 }
 
@@ -175,7 +177,7 @@ class _AppSidebarState extends State<AppSidebar> {
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w600,
-                                fontSize: 12,
+                                fontSize: 14,
                               ),
                             ),
                           ),
@@ -211,7 +213,8 @@ class _AppSidebarState extends State<AppSidebar> {
           onTap: () => widget.onItemSelected(item.index),
           borderRadius: BorderRadius.circular(8),
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            height: 40,
+            padding: const EdgeInsets.symmetric(horizontal: 12),
             decoration: BoxDecoration(
               color: isSelected ? primaryColor : null,
               borderRadius: BorderRadius.circular(8),
@@ -232,16 +235,18 @@ class _AppSidebarState extends State<AppSidebar> {
                   decoration: BoxDecoration(
                     color: isSelected
                         ? Colors.white.withOpacity(0.2)
-                        : TailwindTheme.mediumGray.withOpacity(0.1),
+                        : (item.iconColor?.withOpacity(0.1) ?? 
+                            TailwindTheme.mediumGray.withOpacity(0.1)),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Icon(
                     item.icon,
                     color: isSelected
                         ? Colors.white
-                        : (isDark
-                            ? Colors.white70
-                            : TailwindTheme.mediumGray),
+                        : (item.iconColor ?? 
+                            (isDark
+                                ? Colors.white70
+                                : TailwindTheme.mediumGray)),
                     size: 16,
                   ),
                 ),
@@ -255,8 +260,10 @@ class _AppSidebarState extends State<AppSidebar> {
                           : (isDark ? Colors.white : TailwindTheme.darkGray),
                       fontWeight:
                           isSelected ? FontWeight.w600 : FontWeight.w500,
-                      fontSize: 13,
+                      fontSize: 15,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 if (isSelected)
@@ -296,52 +303,56 @@ class _AppSidebarState extends State<AppSidebar> {
         child: ExpansionTile(
           key: ValueKey(groupKey),
           initiallyExpanded: hasSelectedSubItem,
-          tilePadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          tilePadding: EdgeInsets.zero,
           childrenPadding: const EdgeInsets.only(left: 20, bottom: 4),
-          title: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  color: hasSelectedSubItem
-                      ? Colors.white.withOpacity(0.2)
-                      : TailwindTheme.mediumGray.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Icon(
-                  item.icon,
-                  color: hasSelectedSubItem
-                      ? Colors.white
-                      : (isDark ? Colors.white70 : TailwindTheme.mediumGray),
-                  size: 16,
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Text(
-                  item.title,
-                  style: TextStyle(
-                    color: hasSelectedSubItem
-                        ? Colors.white
-                        : (isDark ? Colors.white : TailwindTheme.darkGray),
-                    fontWeight:
-                        hasSelectedSubItem ? FontWeight.w600 : FontWeight.w500,
-                    fontSize: 13,
+          title: SizedBox(
+            height: 40,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: item.iconColor?.withOpacity(0.1) ?? 
+                        TailwindTheme.mediumGray.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Icon(
+                    item.icon,
+                    color: item.iconColor ?? 
+                        (isDark ? Colors.white70 : TailwindTheme.mediumGray),
+                    size: 16,
                   ),
                 ),
-              ),
-            ],
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    item.title,
+                    style: TextStyle(
+                      color: isDark ? Colors.white70 : TailwindTheme.darkGray,
+                      fontWeight: hasSelectedSubItem
+                          ? FontWeight.w600
+                          : FontWeight.w500,
+                      fontSize: 15,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+            ),
           ),
-          trailing: Icon(
-            isExpanded ? Icons.expand_less : Icons.expand_more,
-            color: hasSelectedSubItem
-                ? Colors.white
-                : (isDark ? Colors.white70 : TailwindTheme.mediumGray),
-            size: 18,
+          trailing: Padding(
+            padding: const EdgeInsets.only(right: 12),
+            child: Icon(
+              isExpanded ? Icons.expand_less : Icons.expand_more,
+              color: isDark ? Colors.white70 : TailwindTheme.mediumGray,
+              size: 18,
+            ),
           ),
-          backgroundColor: hasSelectedSubItem
-              ? primaryColor.withOpacity(0.1)
-              : Colors.transparent,
+          backgroundColor: Colors.transparent,
           collapsedBackgroundColor: Colors.transparent,
           onExpansionChanged: (expanded) {
             setState(() {
@@ -349,6 +360,16 @@ class _AppSidebarState extends State<AppSidebar> {
             });
           },
           children: item.subItems?.map((subItem) {
+                // Check if this subItem has its own subItems (nested)
+                if (subItem.subItems != null && subItem.subItems!.isNotEmpty) {
+                  // Render as nested collapsible group
+                  return _buildCollapsibleGroup(
+                    subItem,
+                    primaryColor,
+                    isDark,
+                  );
+                }
+                // Render as simple item
                 final isSelected = widget.selectedIndex == subItem.index;
                 return Container(
                   margin: const EdgeInsets.only(left: 6, right: 6, bottom: 2),
@@ -358,39 +379,32 @@ class _AppSidebarState extends State<AppSidebar> {
                       onTap: () => widget.onItemSelected(subItem.index),
                       borderRadius: BorderRadius.circular(8),
                       child: Container(
-                        padding:
-                            const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        height: 40,
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
                         decoration: BoxDecoration(
-                          color: isSelected ? primaryColor : null,
-                          borderRadius: BorderRadius.circular(8),
-                          boxShadow: isSelected
-                              ? [
-                                  BoxShadow(
-                                    color: primaryColor.withOpacity(0.2),
-                                    blurRadius: 4,
-                                    offset: const Offset(0, 1),
-                                  ),
-                                ]
+                          color: isSelected
+                              ? (isDark
+                                  ? TailwindTheme.slate700
+                                  : TailwindTheme.slate100)
                               : null,
+                          borderRadius: BorderRadius.circular(8),
                         ),
                         child: Row(
                           children: [
                             Container(
                               padding: const EdgeInsets.all(6),
                               decoration: BoxDecoration(
-                                color: isSelected
-                                    ? Colors.white.withOpacity(0.2)
-                                    : TailwindTheme.mediumGray.withOpacity(0.1),
+                                color: subItem.iconColor?.withOpacity(0.1) ?? 
+                                    TailwindTheme.mediumGray.withOpacity(0.1),
                                 borderRadius: BorderRadius.circular(6),
                               ),
                               child: Icon(
                                 subItem.icon,
-                                color: isSelected
-                                    ? Colors.white
-                                    : (isDark
+                                color: subItem.iconColor ?? 
+                                    (isDark
                                         ? Colors.white70
                                         : TailwindTheme.mediumGray),
-                                size: 14,
+                                size: 16,
                               ),
                             ),
                             const SizedBox(width: 10),
@@ -398,24 +412,24 @@ class _AppSidebarState extends State<AppSidebar> {
                               child: Text(
                                 subItem.title,
                                 style: TextStyle(
-                                  color: isSelected
-                                      ? Colors.white
-                                      : (isDark
-                                          ? Colors.white
-                                          : TailwindTheme.darkGray),
+                                  color: isDark
+                                      ? Colors.white70
+                                      : TailwindTheme.darkGray,
                                   fontWeight: isSelected
                                       ? FontWeight.w600
                                       : FontWeight.w500,
-                                  fontSize: 12,
+                                  fontSize: 15,
                                 ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                             if (isSelected)
                               Container(
                                 width: 4,
                                 height: 4,
-                                decoration: const BoxDecoration(
-                                  color: Colors.white,
+                                decoration: BoxDecoration(
+                                  color: primaryColor,
                                   shape: BoxShape.circle,
                                 ),
                               ),

@@ -64,37 +64,43 @@ class AppWrapper extends StatefulWidget {
 class _AppWrapperState extends State<AppWrapper> {
   bool _isLoggedIn = false;
 
-  // Example menu items
+  // Example menu items with icon colors
   final List<SidebarMenuItem> _menuItems = [
     SidebarMenuItem(
       title: 'Dashboard',
       icon: Icons.dashboard,
       index: 0,
+      iconColor: Colors.blue,
     ),
     SidebarMenuItem(
       title: 'Settings',
       icon: Icons.settings,
       index: 1,
+      iconColor: Colors.grey,
     ),
     SidebarMenuItem(
       title: 'Profile',
       icon: Icons.person,
       index: 2,
+      iconColor: Colors.purple,
     ),
     SidebarMenuItem(
       title: 'Reports',
       icon: Icons.assessment,
       index: 3,
+      iconColor: Colors.indigo,
       subItems: [
         SidebarMenuItem(
           title: 'Sales Report',
           icon: Icons.trending_up,
           index: 4,
+          iconColor: Colors.green,
         ),
         SidebarMenuItem(
           title: 'Analytics',
           icon: Icons.analytics,
           index: 5,
+          iconColor: Colors.orange,
         ),
       ],
     ),
@@ -169,8 +175,8 @@ class _AppWrapperState extends State<AppWrapper> {
     return MainAppScreen(
       menuItems: _menuItems,
       contentBuilder: _buildContent,
-      headerTitle: 'Welcome',
-      headerSubtitle: 'Manage your application',
+      headerTitle: 'Branded Flutter App',
+      headerSubtitle: 'Welcome back',
       headerIcon: Icons.dashboard,
       onLogout: _handleLogout,
     );
